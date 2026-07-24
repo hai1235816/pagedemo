@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拾光画集 · Cozy Reading Illustrations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --warm-cream: #fdf6ec;
+            --soft-orange: #f4a259;
+            --deep-brown: #5c4033;
+            --muted-purple: #7b5e7b;
+            --light-peach: #ffecd2;
+            --text-dark: #3d2c2c;
+            --text-light: #8a6d5b;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Georgia', 'Noto Serif SC', serif;
+            background-color: var(--warm-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* ===== Navigation ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(253, 246, 236, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(92, 64, 51, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--deep-brown);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--soft-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--soft-orange);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(160deg, var(--warm-cream) 0%, var(--light-peach) 40%, #fcd5ce 70%, #e8c4c4 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 70vw;
+            height: 70vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 162, 89, 0.15) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -15%;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 94, 123, 0.1) 0%, transparent 70%);
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            letter-spacing: 6px;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.3s forwards;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: var(--deep-brown);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.6s forwards;
+        }
+
+        .hero-title span {
+            background: linear-gradient(120deg, var(--soft-orange), #e76f51);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.9;
+            opacity: 0;
+            animation: fadeUp 1s ease 0.9s forwards;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 0.9rem 2.5rem;
+            border: 2px solid var(--soft-orange);
+            color: var(--soft-orange);
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeUp 1s ease 1.2s forwards;
+        }
+
+        .hero-btn:hover {
+            background: var(--soft-orange);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(244, 162, 89, 0.4);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint span {
+            display: block;
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid var(--text-light);
+            border-bottom: 2px solid var(--text-light);
+            transform: rotate(45deg);
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Section Common ===== */
+        section {
+            padding: 5rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--deep-brown);
+            margin-bottom: 0.8rem;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .section-header .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--soft-orange), #e76f51);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* ===== Gallery ===== */
+        #gallery {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(92, 64, 51, 0.08);
+        }
+
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 1.5px solid #e0d5c8;
+            background: transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--soft-orange);
+            background: var(--soft-orange);
+            color: #fff;
+        }
+
+        .masonry {
+            columns: 3;
+            column-gap: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(92, 64, 51, 0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2.5rem 1.2rem 1.2rem;
+            background: linear-gradient(transparent, rgba(61, 44, 44, 0.85));
+            color: #fff;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover .overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .overlay h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .overlay p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* ===== About Section ===== */
+        #about {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text p {
+            color: var(--text-light);
+            line-height: 2;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem 1.2rem;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(92, 64, 51, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(120deg, var(--soft-orange), #e76f51);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.4rem;
+        }
+
+        /* ===== Quote Section ===== */
+        .quote-section {
+            background: linear-gradient(135deg, #5c4033, #7b5e7b);
+            text-align: center;
+            padding: 5rem 2rem;
+            margin: 3rem 0;
+        }
+
+        .quote-section blockquote {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .quote-section cite {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        footer .footer-deco {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== Lightbox ===== */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 20, 15, 0.95);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox img {
+            max-width: 85vw;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+
+        .lightbox.active img {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lightbox-prev { left: 2rem; }
+        .lightbox-next { right: 2rem; }
+
+        .lightbox-caption {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .masonry { columns: 2; }
+        }
+
+        @media (max-width: 768px) {
+            .masonry { columns: 1; column-gap: 1rem; }
+            .about-content { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .lightbox-nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="nav-logo">拾光画集</a>
+        <ul class="nav-links">
+            <li><a href="#gallery">画廊</a></li>
+            <li><a href="#about">关于</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-subtitle">COZY READING ILLUSTRATIONS</p>
+            <h1 class="hero-title">拾光<span>画集</span></h1>
+            <p class="hero-desc">
+                在午后的暖阳里，翻开一本书，<br>
+                让时光慢下来。这里收藏着 22 幅关于<br>
+                「阅读与温暖」的数字插画作品。
+            </p>
+            <a href="#gallery" class="hero-btn">浏览作品</a>
+        </div>
+        <div class="scroll-hint"><span></span></div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery">
+        <div class="section-header">
+            <h2>作品画廊</h2>
+            <p>每一幅画，都是一段安静的阅读时光</p>
+            <div class="divider"></div>
+        </div>
+
+        <div class="gallery-filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="warm">暖光系列</button>
+            <button class="filter-btn" data-filter="cozy">温馨角落</button>
+            <button class="filter-btn" data-filter="dream">梦幻色彩</button>
+        </div>
+
+        <div class="masonry" id="masonry">
+            <div class="gallery-item" data-category="warm" data-title="窗边读书人" data-desc="紫色光影下的午后阅读">
+                <img src="statics/038f6ed282b9ffcc34c84445afb04fdb.png" alt="窗边读书人" loading="lazy">
+                <div class="overlay"><h3>窗边读书人</h3><p>紫色光影下的午后阅读</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="沙发上的蓝发女孩" data-desc="图书馆里的温柔微笑">
+                <img src="statics/06cc1f629ceb44789b9e50c95ae9b6bb.png" alt="沙发上的蓝发女孩" loading="lazy">
+                <div class="overlay"><h3>沙发上的蓝发女孩</h3><p>图书馆里的温柔微笑</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="伏案时光" data-desc="金色光晕中的书写瞬间">
+                <img src="statics/0748f07f757241de8f198bc4d4f5c6ed.png" alt="伏案时光" loading="lazy">
+                <div class="overlay"><h3>伏案时光</h3><p>金色光晕中的书写瞬间</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="绿意环绕" data-desc="温室书房中的宁静一刻">
+                <img src="statics/1ad38325b4a2f00907ea2227c1c53aad.png" alt="绿意环绕" loading="lazy">
+                <div class="overlay"><h3>绿意环绕</h3><p>温室书房中的宁静一刻</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="秋日书签" data-desc="落叶纷飞里的阅读时光">
+                <img src="statics/274db5214161f925b171b6ab06f292fb.png" alt="秋日书签" loading="lazy">
+                <div class="overlay"><h3>秋日书签</h3><p>落叶纷飞里的阅读时光</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="星夜执笔" data-desc="星光下的创作热情">
+                <img src="statics/31c9d1a7c599179f5d051c0476ff1e31.png" alt="星夜执笔" loading="lazy">
+                <div class="overlay"><h3>星夜执笔</h3><p>星光下的创作热情</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="秋日沙发" data-desc="阳光透过窗帘的慵懒午后">
+                <img src="statics/465cc4ccc56d18c23edc8fd7de7c6c10.png" alt="秋日沙发" loading="lazy">
+                <div class="overlay"><h3>秋日沙发</h3><p>阳光透过窗帘的慵懒午后</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="书堆之间" data-desc="被故事包围的幸福">
+                <img src="statics/47db0ba18f11357165c767fac0cffbc9.png" alt="书堆之间" loading="lazy">
+                <div class="overlay"><h3>书堆之间</h3><p>被故事包围的幸福</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="窗台暖光" data-desc="逆光中翻页的剪影">
+                <img src="statics/651cca699b5bd0813a98c3fa49a94988.png" alt="窗台暖光" loading="lazy">
+                <div class="overlay"><h3>窗台暖光</h3><p>逆光中翻页的剪影</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="薄暮书声" data-desc="黄昏时分的沉浸阅读">
+                <img src="statics/79ec0b0f2160d20cec366274a96ad91b.png" alt="薄暮书声" loading="lazy">
+                <div class="overlay"><h3>薄暮书声</h3><p>黄昏时分的沉浸阅读</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="灯下漫笔" data-desc="台灯下的思考片刻">
+                <img src="statics/7ade9d301b857d6b4d5511719724cd6c.png" alt="灯下漫笔" loading="lazy">
+                <div class="overlay"><h3>灯下漫笔</h3><p>台灯下的思考片刻</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="绿植与书" data-desc="自然光影里的小世界">
+                <img src="statics/885d8d39cd80944617f8427692691aa4.png" alt="绿植与书" loading="lazy">
+                <div class="overlay"><h3>绿植与书</h3><p>自然光影里的小世界</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="花间阅读" data-desc="绿植环绕的温暖角落">
+                <img src="statics/92ecf6521e87af1a9f5215696a919815.png" alt="花间阅读" loading="lazy">
+                <div class="overlay"><h3>花间阅读</h3><p>绿植环绕的温暖角落</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="橙衫女孩" data-desc="花园书房中的恬静时光">
+                <img src="statics/9d7948dd58bf4719c72095c65e0bf574.png" alt="橙衫女孩" loading="lazy">
+                <div class="overlay"><h3>橙衫女孩</h3><p>花园书房中的恬静时光</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="暮色书页" data-desc="晚霞映照的文字世界">
+                <img src="statics/a0e67f3c3ee713e03c0e1ccb8d2bc137.png" alt="暮色书页" loading="lazy">
+                <div class="overlay"><h3>暮色书页</h3><p>晚霞映照的文字世界</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="靠窗的位置" data-desc="最喜欢的那个角落">
+                <img src="statics/ab3933346e13458e9c143457d0bc153e.png" alt="靠窗的位置" loading="lazy">
+                <div class="overlay"><h3>靠窗的位置</h3><p>最喜欢的那个角落</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="午后图书馆" data-desc="书架间的静谧时光">
+                <img src="statics/ae42db6996e41a9a70068551d9ecc31c.png" alt="午后图书馆" loading="lazy">
+                <div class="overlay"><h3>午后图书馆</h3><p>书架间的静谧时光</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="光影交织" data-desc="梦境与现实的边界">
+                <img src="statics/c32eab962f114fe9dfa6149651dc60bf.png" alt="光影交织" loading="lazy">
+                <div class="overlay"><h3>光影交织</h3><p>梦境与现实的边界</p></div>
+            </div>
+            <div class="gallery-item" data-category="cozy" data-title="格纹裙与书" data-desc="秋日午后的悠闲阅读">
+                <img src="statics/de6c495abcba7c755677ed0aa5bfdd38.png" alt="格纹裙与书" loading="lazy">
+                <div class="overlay"><h3>格纹裙与书</h3><p>秋日午后的悠闲阅读</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="金色黄昏" data-desc="窗畔的最后一缕阳光">
+                <img src="statics/e24d18ac7b0ed70e39be725dfc2168af.png" alt="金色黄昏" loading="lazy">
+                <div class="overlay"><h3>金色黄昏</h3><p>窗畔的最后一缕阳光</p></div>
+            </div>
+            <div class="gallery-item" data-category="dream" data-title="窗边侧影" data-desc="沉浸在故事里的轮廓">
+                <img src="statics/f47a1f9a19d497b3d539dac1f77ab786.png" alt="窗边侧影" loading="lazy">
+                <div class="overlay"><h3>窗边侧影</h3><p>沉浸在故事里的轮廓</p></div>
+            </div>
+            <div class="gallery-item" data-category="warm" data-title="暖阳如初" data-desc="与书相伴的每一天">
+                <img src="statics/f6b504b60ce83f246191a949e9c8a965.png" alt="暖阳如初" loading="lazy">
+                <div class="overlay"><h3>暖阳如初</h3><p>与书相伴的每一天</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote -->
+    <div class="quote-section">
+        <blockquote>「读书是在别人思想的帮助下，建立起自己的思想。」</blockquote>
+        <cite>—— 鲁巴金</cite>
+    </div>
+
+    <!-- About -->
+    <section id="about">
+        <div class="section-header">
+            <h2>关于画集</h2>
+            <p>用画笔记录每一个与书相伴的瞬间</p>
+            <div class="divider"></div>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <p>
+                    「拾光画集」是一组以「阅读时光」为主题的数字插画系列。
+                    画面中，女孩们在洒满阳光的窗边、堆满书籍的书架旁、
+                    绿意盎然的角落里，安静地享受着阅读的乐趣。
+                </p>
+                <p>
+                    整组作品以暖色调为主，运用柔和的光影渐变与细腻的笔触，
+                    营造出温馨治愈的氛围——仿佛能闻到书页的墨香，
+                    感受到午后阳光的温度。
+                </p>
+                <p>
+                    希望每一位观者，都能在这些画面中找到属于自己的那份宁静，
+                    想起某个与书为伴的美好午后。
+                </p>
+            </div>
+            <div class="about-stats">
+                <div class="stat-card">
+                    <div class="number">22</div>
+                    <div class="label">插画作品</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">3</div>
+                    <div class="label">主题系列</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">∞</div>
+                    <div class="label">温暖瞬间</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">1</div>
+                    <div class="label">阅读的心</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-deco">📖 ☀️ 🌿</div>
+        <p>拾光画集 · Cozy Reading Illustrations</p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">愿每一段阅读时光，都被温柔以待</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close">✕</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev">‹</button>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next">›</button>
+        <img src="" alt="" id="lightbox-img">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Scroll reveal for gallery items
+        const items = document.querySelectorAll('.gallery-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        items.forEach(item => observer.observe(item));
+
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+
+                items.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => item.classList.add('visible'), 50);
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('visible');
+                    }
+                });
+            });
+        });
+
+        // Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        let currentIndex = 0;
+        let visibleItems = [];
+
+        function getVisibleItems() {
+            return Array.from(items).filter(item => item.style.display !== 'none');
+        }
+
+        function openLightbox(index) {
+            visibleItems = getVisibleItems();
+            currentIndex = index;
+            updateLightbox();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateLightbox() {
+            const item = visibleItems[currentIndex];
+            const img = item.querySelector('img');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            lightboxCaption.textContent = item.dataset.title + ' — ' + item.dataset.desc;
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        items.forEach((item, i) => {
+            item.addEventListener('click', () => {
+                const vis = getVisibleItems();
+                openLightbox(vis.indexOf(item));
+            });
+        });
+
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        document.getElementById('lightbox-prev').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
+            updateLightbox();
+        });
+
+        document.getElementById('lightbox-next').addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % visibleItems.length;
+            updateLightbox();
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') {
+                currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
+                updateLightbox();
+            }
+            if (e.key === 'ArrowRight') {
+                currentIndex = (currentIndex + 1) % visibleItems.length;
+                updateLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
